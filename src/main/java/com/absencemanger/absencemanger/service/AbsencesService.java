@@ -34,20 +34,15 @@ public class AbsencesService {
     }
 
     public Absence updateAbsence(Long id, ApproveRejectDTO approveRejectDTO){
-        Optional<Absence> absence = absenceRepository.findById(id);
-        if(absence.isEmpty()){
-            return null;
-        }else{
-            return absence.map(absence1 -> {
+        return absenceRepository.findById(id).map(absence1 -> {
                 if(approveRejectDTO.isAccepted()) {
                     absence1.setConfirmationDate(currentDatetime);
                 }else{
                     absence1.setRejectedAt(currentDatetime);
                 }
                 absence1.setAdmitterId(approveRejectDTO.getAdmitterId());
-                absence1.setAdmitterNote(absence1.getAdmitterNote());
+                absence1.setAdmitterNote(approveRejectDTO.getAdmitterNote());
                return absenceRepository.save(absence1);
             }).orElse(null);
-        }
     }
 }
